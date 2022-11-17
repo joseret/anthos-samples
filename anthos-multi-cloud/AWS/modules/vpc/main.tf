@@ -34,7 +34,7 @@ data "aws_vpc" "selected" {
   tags = {
     Name = "${var.anthos_prefix}-anthos-vpc"
   }
-  timeouts = {
+  timeouts {
     read = "0m"
   }
 }

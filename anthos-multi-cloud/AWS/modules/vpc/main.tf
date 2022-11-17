@@ -33,6 +33,8 @@ data "aws_vpc" "selected" {
   tags = {
     Name = "${var.anthos_prefix}-anthos-vpc"
   }
+  default = null
+
 }
 
 # Create a VPC

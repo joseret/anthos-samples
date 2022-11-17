@@ -18,7 +18,7 @@ terraform {
   required_version = ">= 0.12.23"
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      # source = "hashicorp/aws"
     }
   }
 }
@@ -41,7 +41,7 @@ data "aws_vpc" "selected" {
 
 
 resource "aws_vpc" "this" {
-  count = (data.aws_vpc.selected.arn == null ? 1 : 0)
+  # count = (data.aws_vpc.selected.arn == null ? 1 : 0)
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
   enable_dns_support   = true

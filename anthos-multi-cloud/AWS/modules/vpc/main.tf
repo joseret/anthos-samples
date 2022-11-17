@@ -35,7 +35,9 @@ data "aws_vpc" "selected" {
     Name = "${var.anthos_prefix}-anthos-vpc"
   }
   default = true
-
+  depends_on = [
+    aws_vpc.this
+  ]
 }
 
 # Create a VPC
@@ -51,6 +53,7 @@ resource "aws_vpc" "this" {
   tags = {
     Name = "${var.anthos_prefix}-anthos-vpc"
   }
+
 }
 
 # Create sample VPC

@@ -70,7 +70,7 @@ resource "aws_subnet" "private_cp" {
     "kubernetes.io/role/internal-elb" = "1"
   }
   depends_on = [
-    aws_subnet.aws_vpc
+    aws_vpc.this
   ]
 }
 
@@ -88,7 +88,7 @@ resource "aws_subnet" "public" {
     Name = "${local.vpc_name}-public-${var.subnet_availability_zones[count.index]}"
   }
   depends_on = [
-    aws_subnet.aws_vpc
+    aws_vpc.this
   ]
 }
 
@@ -101,8 +101,8 @@ resource "aws_internet_gateway" "this" {
     Name = local.vpc_name
   }
   depends_on = [
-    aws_subnet.aws_vpc
-  ]  
+    aws_vpc.this
+  ]
 }
 
 
@@ -118,8 +118,8 @@ resource "aws_route_table" "public" {
     Name = "${local.vpc_name}-public-${count.index}"
   }
   depends_on = [
-    aws_subnet.aws_vpc
-  ]  
+    aws_vpc.this
+  ]
 }
 
 # Associate the public route table to the public subnet
@@ -129,7 +129,8 @@ resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public[count.index].id
   depends_on = [
-    aws_subnet.aws_vpc
+    aws_subnet.public,
+    aws_route_table.public
   ]  
 }
 
@@ -144,7 +145,8 @@ resource "aws_route" "public_internet_gateway" {
     create = "5m"
   }
   depends_on = [
-    aws_subnet.aws_vpc
+    aws_route_table.public, 
+    aws_internet_gateway.this
   ]  
 }
 
@@ -157,7 +159,7 @@ resource "aws_eip" "nat" {
     Name = "${local.vpc_name}-nat-${var.subnet_availability_zones[count.index]}"
   }
   depends_on = [
-    aws_subnet.aws_vpc
+    aws_vpc.this
   ]
 }
 
@@ -169,18 +171,21 @@ resource "aws_nat_gateway" "this" {
   tags = {
     Name = "${local.vpc_name}-${var.subnet_availability_zones[count.index]}"
   }
-  depends_on = [aws_internet_gateway.this]
+  depends_on = [
+    aws_eip.nat,
+    aws_subnet.public
+  ]  
 }
 
 # Create a route table for each private subnet
 resource "aws_route_table" "private" {
   count  = local.az_count
-  vpc_id = aws_vpc.this.id
+  vpc_id = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
   tags = {
     Name = "${local.vpc_name}-private-${count.index}"
   }
   depends_on = [
-    aws_subnet.aws_vpc
+    aws_vpc.this
   ]  
 }
 
@@ -190,7 +195,8 @@ resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private_cp[count.index].id
   route_table_id = aws_route_table.private[count.index].id
   depends_on = [
-    aws_subnet.aws_vpc
+    aws_subnet.private_cp,
+    aws_route_table.private
   ]  
 }
 # Create default routes to the NAT gateway
@@ -204,6 +210,7 @@ resource "aws_route" "private_nat_gateway" {
     create = "5m"
   }
   depends_on = [
-    aws_subnet.aws_vpc
+    aws_route_table.private,
+    aws_nat_gateway.this
   ]
 }

@@ -29,11 +29,11 @@ locals {
   psubnet_count = length(var.public_subnet_cidr_block)
 }
 
-# data "aws_vpc" "selected" {
-#   tags = {
-#     Name = "${var.anthos_prefix}-anthos-vpc"
-#   }
-# }
+data "aws_vpc" "selected" {
+  tags = {
+    Name = "${var.anthos_prefix}-anthos-vpc"
+  }
+}
 
 # Create a VPC
 # https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-aws-vpc
@@ -41,7 +41,7 @@ locals {
 
 
 resource "aws_vpc" "this" {
-  # count = (data.aws_vpc.selected.arn == null ? 1 : 0)
+  count = (data.aws_vpc.selected.arn == null ? 1 : 0)
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
   enable_dns_support   = true
@@ -62,13 +62,16 @@ resource "aws_vpc" "this" {
 # Step 1
 resource "aws_subnet" "private_cp" {
   count             = local.az_count
-  vpc_id            = aws_vpc.this.id
+  vpc_id            = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
   cidr_block        = var.cp_private_subnet_cidr_blocks[count.index]
   availability_zone = var.subnet_availability_zones[count.index]
   tags = {
     Name                              = "${local.vpc_name}-private-cp-${var.subnet_availability_zones[count.index]}",
     "kubernetes.io/role/internal-elb" = "1"
   }
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]
 }
 
 
@@ -77,23 +80,29 @@ resource "aws_subnet" "private_cp" {
 resource "aws_subnet" "public" {
 
   count                   = local.psubnet_count
-  vpc_id                  = aws_vpc.this.id
+  vpc_id                  = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
   cidr_block              = var.public_subnet_cidr_block[count.index]
   availability_zone       = var.subnet_availability_zones[count.index]
   map_public_ip_on_launch = true
   tags = {
     Name = "${local.vpc_name}-public-${var.subnet_availability_zones[count.index]}"
   }
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]
 }
 
 
 # Step 4
 # Create an internet gateway
 resource "aws_internet_gateway" "this" {
-  vpc_id = aws_vpc.this.id
+  vpc_id = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
   tags = {
     Name = local.vpc_name
   }
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]  
 }
 
 
@@ -103,11 +112,14 @@ resource "aws_internet_gateway" "this" {
 # Step 1
 resource "aws_route_table" "public" {
   count  = local.psubnet_count
-  vpc_id = aws_vpc.this.id
+  vpc_id = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
 
   tags = {
     Name = "${local.vpc_name}-public-${count.index}"
   }
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]  
 }
 
 # Associate the public route table to the public subnet
@@ -116,6 +128,9 @@ resource "aws_route_table_association" "public" {
   count          = local.psubnet_count
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public[count.index].id
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]  
 }
 
 
@@ -128,6 +143,9 @@ resource "aws_route" "public_internet_gateway" {
   timeouts {
     create = "5m"
   }
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]  
 }
 
 
@@ -138,6 +156,9 @@ resource "aws_eip" "nat" {
   tags = {
     Name = "${local.vpc_name}-nat-${var.subnet_availability_zones[count.index]}"
   }
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]
 }
 
 # Create a Nat gateway for each of the public subnets
@@ -158,6 +179,9 @@ resource "aws_route_table" "private" {
   tags = {
     Name = "${local.vpc_name}-private-${count.index}"
   }
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]  
 }
 
 # Associate the private route table with the private subnet
@@ -165,6 +189,9 @@ resource "aws_route_table_association" "private" {
   count          = local.az_count
   subnet_id      = aws_subnet.private_cp[count.index].id
   route_table_id = aws_route_table.private[count.index].id
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]  
 }
 # Create default routes to the NAT gateway
 
@@ -176,4 +203,7 @@ resource "aws_route" "private_nat_gateway" {
   timeouts {
     create = "5m"
   }
+  depends_on = [
+    aws_subnet.aws_vpc
+  ]
 }

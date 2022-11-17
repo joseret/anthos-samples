@@ -34,10 +34,9 @@ data "aws_vpc" "selected" {
   tags = {
     Name = "${var.anthos_prefix}-anthos-vpc"
   }
-  default = true
-  depends_on = [
-    aws_vpc.this
-  ]
+  timeouts = {
+    read = 0
+  }
 }
 
 # Create a VPC

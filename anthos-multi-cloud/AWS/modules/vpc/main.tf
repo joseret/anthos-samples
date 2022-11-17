@@ -29,10 +29,19 @@ locals {
   psubnet_count = length(var.public_subnet_cidr_block)
 }
 
+data "aws_vpc" "selected" {
+  tags = {
+    Name = "${var.anthos_prefix}-anthos-vpc"
+  }
+}
+
 # Create a VPC
 # https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-aws-vpc
 
+
+
 resource "aws_vpc" "this" {
+  count = (data.aws_vpc.selected.arn == null ? 1 : 0)
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
   enable_dns_support   = true

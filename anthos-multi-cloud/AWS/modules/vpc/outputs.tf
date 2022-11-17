@@ -16,7 +16,7 @@
 
 output "aws_vpc_id" {
   description = "ARN of the actuated KMS key resource for cluster secret encryption"
-  value       = aws_vpc.this.id
+  value       = aws_vpc.this[0].id
 }
 output "aws_cp_subnet_id_1" {
   description = "private subnet ID of control plane 1"

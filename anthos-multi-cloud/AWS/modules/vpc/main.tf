@@ -30,26 +30,23 @@ locals {
   psubnet_count = length(var.public_subnet_cidr_block)
 }
 
-data "aws_vpc" "selected" {
-  # tags = {
-  #   Name = "${var.anthos_prefix}-anthos-vpc"
-  # }
-  filter {
-    name = "tag:Name"
-    values = ["${var.anthos_prefix}-anthos-vpc"]
-  }
+locals {
+  vpc_check_script = join(" ", [ 
+     "aws", "ec2", "describe-vpcs",
+   "  --region=us-east-1", "--filters",
+    "Name=tag:Name,Values=${local.name_prefix}-anthos-vpc",
+    "|", "jq", "-r", 
+    "'if .Vpcs[0] == null then {} else .Vpcs[0] | with_entries(select(.key | in({\"VpcId\":1}))) end'"
+  ])
+  vpc_exists = (try(data.external.aws_vpc_exists.result["Vpcs"], "empty")) == "empty" ? false : true
+  vpc_id = (try(data.external.aws_vpc_exists.result["VpcId"], "empty")) == "empty" ? null : data.external.aws_vpc_exists.result["VpcId"]
 }
 
-module "tmp_vpc_out" {
-  source                = "terraform-google-modules/gcloud/google"
-  platform              = "linux"
-  create_cmd_entrypoint = "bash"
-  create_cmd_body       = "-c 'aws ec2 describe-vpcs --region us-east-1 | jq '.Vpcs[0]' > 'tmp-vpc.out"
-  # module_depends_on     = [module.anthos_cluster]
+data "external" "aws_vpc_exists" {
+
+  program=["bash", "-c", local.vpc_check_script
+  ]
 }
-
-
-
 
 # Create a VPC
 # https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-aws-vpc
@@ -57,7 +54,7 @@ module "tmp_vpc_out" {
 
 
 resource "aws_vpc" "this" {
-  count = (trimspace(file("tmp-vpc.out")) != "null" ? 1 : 0)
+  count = (! local.vpc_exists) ? 1 : 0
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
   enable_dns_support   = true
@@ -65,19 +62,9 @@ resource "aws_vpc" "this" {
     Name = "${var.anthos_prefix}-anthos-vpc"
   }
   depends_on = [
-    module.tmp_vpc_out
+    data.external.aws_vpc_exists
   ]
 
-}
-
-module "tmp_vpc_out_2" {
-  source                = "terraform-google-modules/gcloud/google"
-  platform              = "linux"
-  create_cmd_entrypoint = "bash"
-  create_cmd_body       = "-c 'aws ec2 describe-vpcs --region us-east-1 | jq '.Vpcs[0]' > 'tmp-vpc.out_2"
-  depends_depends_on = [
-    aws_vpc.this
-  ]      
 }
 
 # Create sample VPC

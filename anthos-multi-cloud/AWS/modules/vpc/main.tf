@@ -219,16 +219,16 @@ resource "aws_route_table_association" "private" {
 
 # # Create default routes to the NAT gateway
 
-# resource "aws_route" "private_nat_gateway" {
-#   count                  = local.az_count
-#   route_table_id         = aws_route_table.private[count.index].id
-#   nat_gateway_id         = aws_nat_gateway.this[count.index].id
-#   destination_cidr_block = "0.0.0.0/0"
-#   timeouts {
-#     create = "5m"
-#   }
-#   depends_on = [
-#     aws_route_table.private,
-#     aws_nat_gateway.this
-#   ]
-# }
+resource "aws_route" "private_nat_gateway" {
+  count                  = local.az_count
+  route_table_id         = aws_route_table.private[count.index].id
+  nat_gateway_id         = aws_nat_gateway.this[count.index].id
+  destination_cidr_block = "0.0.0.0/0"
+  timeouts {
+    create = "5m"
+  }
+  depends_on = [
+    aws_route_table.private,
+    aws_nat_gateway.this
+  ]
+}

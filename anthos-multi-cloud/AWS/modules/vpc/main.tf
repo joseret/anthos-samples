@@ -140,16 +140,16 @@ resource "aws_route_table" "public" {
 }
 
 # # Associate the public route table to the public subnet
-# resource "aws_route_table_association" "public" {
+resource "aws_route_table_association" "public" {
 
-#   count          = local.psubnet_count
-#   subnet_id      = aws_subnet.public[count.index].id
-#   route_table_id = aws_route_table.public[count.index].id
-#   depends_on = [
-#     aws_subnet.public,
-#     aws_route_table.public
-#   ]  
-# }
+  count          = local.psubnet_count
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public[count.index].id
+  depends_on = [
+    aws_subnet.public,
+    aws_route_table.public
+  ]  
+}
 
 
 # # Create default routers to the internet gateway

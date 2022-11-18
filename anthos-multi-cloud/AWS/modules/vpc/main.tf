@@ -127,17 +127,17 @@ resource "aws_internet_gateway" "this" {
 # # Configure the routing table
 # # https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-aws-vpc#configure_the_routing_tables_for_private_subnets
 # # Step 1
-# resource "aws_route_table" "public" {
-#   count  = local.psubnet_count
-#   vpc_id = try(aws_vpc.this[0].id, local.vpc_id)
+resource "aws_route_table" "public" {
+  count  = local.psubnet_count
+  vpc_id = try(aws_vpc.this[0].id, local.vpc_id)
 
-#   tags = {
-#     Name = "${local.vpc_name}-public-${count.index}"
-#   }
-#   depends_on = [
-#     aws_vpc.this
-#   ]
-# }
+  tags = {
+    Name = "${local.vpc_name}-public-${count.index}"
+  }
+  depends_on = [
+    aws_vpc.this
+  ]
+}
 
 # # Associate the public route table to the public subnet
 # resource "aws_route_table_association" "public" {

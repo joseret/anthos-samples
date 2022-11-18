@@ -195,16 +195,16 @@ resource "aws_nat_gateway" "this" {
 }
 
 # # Create a route table for each private subnet
-# resource "aws_route_table" "private" {
-#   count  = local.az_count
-#   vpc_id = try(aws_vpc.this[0].id, local.vpc_id)
-#   tags = {
-#     Name = "${local.vpc_name}-private-${count.index}"
-#   }
-#   depends_on = [
-#     aws_vpc.this
-#   ]  
-# }
+resource "aws_route_table" "private" {
+  count  = local.az_count
+  vpc_id = try(aws_vpc.this[0].id, local.vpc_id)
+  tags = {
+    Name = "${local.vpc_name}-private-${count.index}"
+  }
+  depends_on = [
+    aws_vpc.this
+  ]  
+}
 
 # # Associate the private route table with the private subnet
 # resource "aws_route_table_association" "private" {

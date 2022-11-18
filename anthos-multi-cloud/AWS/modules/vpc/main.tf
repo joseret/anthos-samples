@@ -169,16 +169,16 @@ resource "aws_route" "public_internet_gateway" {
 
 
 # # Reservce an elastic IP address for the NAT gateway_id
-# resource "aws_eip" "nat" {
-#   count = local.psubnet_count
-#   vpc   = true
-#   tags = {
-#     Name = "${local.vpc_name}-nat-${var.subnet_availability_zones[count.index]}"
-#   }
-#   depends_on = [
-#     aws_vpc.this
-#   ]
-# }
+resource "aws_eip" "nat" {
+  count = local.psubnet_count
+  vpc   = true
+  tags = {
+    Name = "${local.vpc_name}-nat-${var.subnet_availability_zones[count.index]}"
+  }
+  depends_on = [
+    aws_vpc.this
+  ]
+}
 
 # # Create a Nat gateway for each of the public subnets
 # resource "aws_nat_gateway" "this" {

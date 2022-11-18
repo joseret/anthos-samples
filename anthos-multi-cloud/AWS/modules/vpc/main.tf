@@ -181,18 +181,18 @@ resource "aws_eip" "nat" {
 }
 
 # # Create a Nat gateway for each of the public subnets
-# resource "aws_nat_gateway" "this" {
-#   count         = local.psubnet_count
-#   allocation_id = aws_eip.nat[count.index].id
-#   subnet_id     = aws_subnet.public[count.index].id
-#   tags = {
-#     Name = "${local.vpc_name}-${var.subnet_availability_zones[count.index]}"
-#   }
-#   depends_on = [
-#     aws_eip.nat,
-#     aws_subnet.public
-#   ]  
-# }
+resource "aws_nat_gateway" "this" {
+  count         = local.psubnet_count
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
+  tags = {
+    Name = "${local.vpc_name}-${var.subnet_availability_zones[count.index]}"
+  }
+  depends_on = [
+    aws_eip.nat,
+    aws_subnet.public
+  ]  
+}
 
 # # Create a route table for each private subnet
 # resource "aws_route_table" "private" {

@@ -24,45 +24,49 @@ terraform {
   }
 }
 
+locals {
+  key_anthos_prefix = "${local.key_anthos_prefix}-a"
+}
+
 data "aws_caller_identity" "current" {}
 #Create KMS
 # https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-aws-kms-key
 
 resource "aws_kms_key" "database_encryption_kms_key" {
-  description = "${var.anthos_prefix} AWS Database Encryption KMS Key"
+  description = "${local.key_anthos_prefix} AWS Database Encryption KMS Key"
 }
 
 resource "aws_kms_alias" "database_encryption_kms_key_alias" {
   target_key_id = aws_kms_key.database_encryption_kms_key.arn
-  name          = "alias/anthos-${var.anthos_prefix}-database-key"
+  name          = "alias/anthos-${local.key_anthos_prefix}-database-key"
 }
 
 # resource "aws_kms_key" "control_plane_config_encryption_kms_key" {
-#   description = "${var.anthos_prefix} AWS Control Plane Configuration Encryption KMS Key"
+#   description = "${local.key_anthos_prefix} AWS Control Plane Configuration Encryption KMS Key"
 # }
 
 # resource "aws_kms_alias" "control_plane_config_encryption_kms_key_alias" {
 #   target_key_id = aws_kms_key.control_plane_config_encryption_kms_key.arn
-#   name          = "alias/anthos-${var.anthos_prefix}-cp-config-key"
+#   name          = "alias/anthos-${local.key_anthos_prefix}-cp-config-key"
 # }
 
 # resource "aws_kms_key" "control_plane_main_volume_encryption_kms_key" {
-#   description = "${var.anthos_prefix} AWS Control Plane Main Volume Encryption KMS Key"
+#   description = "${local.key_anthos_prefix} AWS Control Plane Main Volume Encryption KMS Key"
 # }
 
 # resource "aws_kms_alias" "control_plane_main_volume_encryption_kms_key_alias" {
 #   target_key_id = aws_kms_key.control_plane_main_volume_encryption_kms_key.arn
-#   name          = "alias/anthos-${var.anthos_prefix}-cp-main-volume-key"
+#   name          = "alias/anthos-${local.key_anthos_prefix}-cp-main-volume-key"
 # }
 
 # resource "aws_kms_key" "control_plane_root_volume_encryption_kms_key" {
-#   description = "${var.anthos_prefix} AWS Control Plane Root Volume Encryption KMS Key"
+#   description = "${local.key_anthos_prefix} AWS Control Plane Root Volume Encryption KMS Key"
 #   policy      = data.aws_iam_policy_document.root_volume_encryption_policy_document.json
 # }
 
 # resource "aws_kms_alias" "control_plane_root_volume_encryption_kms_key_alias" {
 #   target_key_id = aws_kms_key.control_plane_root_volume_encryption_kms_key.arn
-#   name          = "alias/anthos-${var.anthos_prefix}-cp-root-volume-key"
+#   name          = "alias/anthos-${local.key_anthos_prefix}-cp-root-volume-key"
 # }
 
 # data "aws_iam_policy_document" "root_volume_encryption_policy_document" {
@@ -131,20 +135,20 @@ resource "aws_kms_alias" "database_encryption_kms_key_alias" {
 # }
 
 # resource "aws_kms_key" "node_pool_config_encryption_kms_key" {
-#   description = "${var.anthos_prefix} AWS Node Pool Configuration Encryption KMS Key"
+#   description = "${local.key_anthos_prefix} AWS Node Pool Configuration Encryption KMS Key"
 # }
 
 # resource "aws_kms_alias" "node_pool_config_encryption_kms_key_alias" {
 #   target_key_id = aws_kms_key.node_pool_config_encryption_kms_key.arn
-#   name          = "alias/anthos-${var.anthos_prefix}-np-config-key"
+#   name          = "alias/anthos-${local.key_anthos_prefix}-np-config-key"
 # }
 
 # resource "aws_kms_key" "node_pool_root_volume_encryption_kms_key" {
-#   description = "${var.anthos_prefix} AWS Node Pool Root Volume Encryption KMS Key"
+#   description = "${local.key_anthos_prefix} AWS Node Pool Root Volume Encryption KMS Key"
 #   policy      = data.aws_iam_policy_document.root_volume_encryption_policy_document.json
 # }
 
 # resource "aws_kms_alias" "node_pool_root_volume_encryption_kms_key_alias" {
 #   target_key_id = aws_kms_key.node_pool_root_volume_encryption_kms_key.arn
-#   name          = "alias/anthos-${var.anthos_prefix}-np-root-volume-key"
+#   name          = "alias/anthos-${local.key_anthos_prefix}-np-root-volume-key"
 # }

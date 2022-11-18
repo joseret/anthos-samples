@@ -115,3 +115,8 @@ variable "control_plane_instance_type" {
   description = "AWS Node instance type"
   type        = string
 }
+
+variable "ctl_vpc_exists" {
+  type = boolean
+  default = false
+}

@@ -16,14 +16,16 @@
 
 
 locals {
-  name_prefix = "${var.name_prefix}-${random_string.suffix.result}"
+  # name_prefix = "${var.name_prefix}-${random_string.suffix.result}"
+  name_prefix = var.name_prefix
 }
-resource "random_string" "suffix" {
-  length    = 2
-  special   = false
-  lower     = true
-  min_lower = 2
-}
+
+# resource "random_string" "suffix" {
+#   length    = 2
+#   special   = false
+#   lower     = true
+#   min_lower = 2
+# }
 
 
 module "kms" {
@@ -51,6 +53,7 @@ module "vpc" {
   public_subnet_cidr_block      = var.public_subnet_cidr_block
   cp_private_subnet_cidr_blocks = var.cp_private_subnet_cidr_blocks
   np_private_subnet_cidr_blocks = var.np_private_subnet_cidr_blocks
+  ctl_vpc_exists                = var.ctl_vpc_exists
 }
 
 module "gcp_data" {

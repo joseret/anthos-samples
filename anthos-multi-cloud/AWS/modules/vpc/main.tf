@@ -31,13 +31,25 @@ locals {
 }
 
 data "aws_vpc" "selected" {
-  tags = {
-    Name = "${var.anthos_prefix}-anthos-vpc"
-  }
-  timeouts {
-    read = "0m"
+  # tags = {
+  #   Name = "${var.anthos_prefix}-anthos-vpc"
+  # }
+  filter {
+    name = "tag:Name"
+    values = ["${var.anthos_prefix}-anthos-vpc"]
   }
 }
+
+module "tmp_vpc_out" {
+  source                = "terraform-google-modules/gcloud/google"
+  platform              = "linux"
+  create_cmd_entrypoint = "bash"
+  create_cmd_body       = "-c 'aws ec2 describe-vpcs --region us-east-1 | jq '.Vpcs[0]' > 'tmp-vpc.out"
+  # module_depends_on     = [module.anthos_cluster]
+}
+
+
+
 
 # Create a VPC
 # https://cloud.google.com/anthos/clusters/docs/multi-cloud/aws/how-to/create-aws-vpc
@@ -45,14 +57,27 @@ data "aws_vpc" "selected" {
 
 
 resource "aws_vpc" "this" {
-  count = (data.aws_vpc.selected.arn == null ? 1 : 0)
+  count = (trimspace(file("tmp-vpc.out")) != "null" ? 1 : 0)
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
   enable_dns_support   = true
   tags = {
     Name = "${var.anthos_prefix}-anthos-vpc"
   }
+  depends_on = [
+    module.tmp_vpc_out
+  ]
 
+}
+
+module "tmp_vpc_out_2" {
+  source                = "terraform-google-modules/gcloud/google"
+  platform              = "linux"
+  create_cmd_entrypoint = "bash"
+  create_cmd_body       = "-c 'aws ec2 describe-vpcs --region us-east-1 | jq '.Vpcs[0]' > 'tmp-vpc.out_2"
+  depends_depends_on = [
+    aws_vpc.this
+  ]      
 }
 
 # Create sample VPC

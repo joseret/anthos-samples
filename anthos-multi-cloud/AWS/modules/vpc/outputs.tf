@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-output "aws_vpc_id" {
-  description = "ARN of the actuated KMS key resource for cluster secret encryption"
-  value       = aws_vpc.this[0].id
-}
-output "aws_cp_subnet_id_1" {
-  description = "private subnet ID of control plane 1"
-  value       = aws_subnet.private_cp[0].id
-}
+# output "aws_vpc_id" {
+#   description = "ARN of the actuated KMS key resource for cluster secret encryption"
+#   value       = aws_vpc.this[0].id
+# }
+# output "aws_cp_subnet_id_1" {
+#   description = "private subnet ID of control plane 1"
+#   value       = aws_subnet.private_cp[0].id
+# }
 
-output "aws_cp_subnet_id_2" {
-  description = "private subnet ID of control plane 2"
-  value       = aws_subnet.private_cp[1].id
-}
-output "aws_cp_subnet_id_3" {
-  description = "private subnet ID of control plane 3"
-  value       = aws_subnet.private_cp[2].id
-}
+# output "aws_cp_subnet_id_2" {
+#   description = "private subnet ID of control plane 2"
+#   value       = aws_subnet.private_cp[1].id
+# }
+# output "aws_cp_subnet_id_3" {
+#   description = "private subnet ID of control plane 3"
+#   value       = aws_subnet.private_cp[2].id
+# }

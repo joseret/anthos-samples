@@ -207,15 +207,16 @@ resource "aws_route_table" "private" {
 }
 
 # # Associate the private route table with the private subnet
-# resource "aws_route_table_association" "private" {
-#   count          = local.az_count
-#   subnet_id      = aws_subnet.private_cp[count.index].id
-#   route_table_id = aws_route_table.private[count.index].id
-#   depends_on = [
-#     aws_subnet.private_cp,
-#     aws_route_table.private
-#   ]  
-# }
+resource "aws_route_table_association" "private" {
+  count          = local.az_count
+  subnet_id      = aws_subnet.private_cp[count.index].id
+  route_table_id = aws_route_table.private[count.index].id
+  depends_on = [
+    aws_subnet.private_cp,
+    aws_route_table.private
+  ]  
+}
+
 # # Create default routes to the NAT gateway
 
 # resource "aws_route" "private_nat_gateway" {

@@ -41,33 +41,33 @@ resource "aws_kms_alias" "database_encryption_kms_key_alias" {
   name          = "alias/anthos-${local.key_anthos_prefix}-database-key"
 }
 
-# resource "aws_kms_key" "control_plane_config_encryption_kms_key" {
-#   description = "${local.key_anthos_prefix} AWS Control Plane Configuration Encryption KMS Key"
-# }
+resource "aws_kms_key" "control_plane_config_encryption_kms_key" {
+  description = "${local.key_anthos_prefix} AWS Control Plane Configuration Encryption KMS Key"
+}
 
-# resource "aws_kms_alias" "control_plane_config_encryption_kms_key_alias" {
-#   target_key_id = aws_kms_key.control_plane_config_encryption_kms_key.arn
-#   name          = "alias/anthos-${local.key_anthos_prefix}-cp-config-key"
-# }
+resource "aws_kms_alias" "control_plane_config_encryption_kms_key_alias" {
+  target_key_id = aws_kms_key.control_plane_config_encryption_kms_key.arn
+  name          = "alias/anthos-${local.key_anthos_prefix}-cp-config-key"
+}
 
-# resource "aws_kms_key" "control_plane_main_volume_encryption_kms_key" {
-#   description = "${local.key_anthos_prefix} AWS Control Plane Main Volume Encryption KMS Key"
-# }
+resource "aws_kms_key" "control_plane_main_volume_encryption_kms_key" {
+  description = "${local.key_anthos_prefix} AWS Control Plane Main Volume Encryption KMS Key"
+}
 
-# resource "aws_kms_alias" "control_plane_main_volume_encryption_kms_key_alias" {
-#   target_key_id = aws_kms_key.control_plane_main_volume_encryption_kms_key.arn
-#   name          = "alias/anthos-${local.key_anthos_prefix}-cp-main-volume-key"
-# }
+resource "aws_kms_alias" "control_plane_main_volume_encryption_kms_key_alias" {
+  target_key_id = aws_kms_key.control_plane_main_volume_encryption_kms_key.arn
+  name          = "alias/anthos-${local.key_anthos_prefix}-cp-main-volume-key"
+}
 
-# resource "aws_kms_key" "control_plane_root_volume_encryption_kms_key" {
-#   description = "${local.key_anthos_prefix} AWS Control Plane Root Volume Encryption KMS Key"
-#   policy      = data.aws_iam_policy_document.root_volume_encryption_policy_document.json
-# }
+resource "aws_kms_key" "control_plane_root_volume_encryption_kms_key" {
+  description = "${local.key_anthos_prefix} AWS Control Plane Root Volume Encryption KMS Key"
+  policy      = data.aws_iam_policy_document.root_volume_encryption_policy_document.json
+}
 
-# resource "aws_kms_alias" "control_plane_root_volume_encryption_kms_key_alias" {
-#   target_key_id = aws_kms_key.control_plane_root_volume_encryption_kms_key.arn
-#   name          = "alias/anthos-${local.key_anthos_prefix}-cp-root-volume-key"
-# }
+resource "aws_kms_alias" "control_plane_root_volume_encryption_kms_key_alias" {
+  target_key_id = aws_kms_key.control_plane_root_volume_encryption_kms_key.arn
+  name          = "alias/anthos-${local.key_anthos_prefix}-cp-root-volume-key"
+}
 
 # data "aws_iam_policy_document" "root_volume_encryption_policy_document" {
 #   // Allow access by AWSServiceRoleForAutoScaling.

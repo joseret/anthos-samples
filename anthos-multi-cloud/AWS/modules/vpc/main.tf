@@ -94,20 +94,20 @@ resource "aws_subnet" "private_cp" {
 
 # # Create a public subnet for each node pool
 # # Mark the subnet as public.
-# resource "aws_subnet" "public" {
+resource "aws_subnet" "public" {
 
-#   count                   = local.psubnet_count
-#   vpc_id                  = try(aws_vpc.this[0].id, local.vpc_id)
-#   cidr_block              = var.public_subnet_cidr_block[count.index]
-#   availability_zone       = var.subnet_availability_zones[count.index]
-#   map_public_ip_on_launch = true
-#   tags = {
-#     Name = "${local.vpc_name}-public-${var.subnet_availability_zones[count.index]}"
-#   }
-#   depends_on = [
-#     aws_vpc.this
-#   ]
-# }
+  count                   = local.psubnet_count
+  vpc_id                  = try(aws_vpc.this[0].id, local.vpc_id)
+  cidr_block              = var.public_subnet_cidr_block[count.index]
+  availability_zone       = var.subnet_availability_zones[count.index]
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "${local.vpc_name}-public-${var.subnet_availability_zones[count.index]}"
+  }
+  depends_on = [
+    aws_vpc.this
+  ]
+}
 
 
 # # Step 4

@@ -34,7 +34,7 @@ locals {
   vpc_check_script = join(" ", [ 
      "aws", "ec2", "describe-vpcs",
    "  --region=us-east-1", "--filters",
-    "Name=tag:Name,Values=${local.name_prefix}-anthos-vpc",
+    "Name=tag:Name,Values=${local.anthos_prefix}-anthos-vpc",
     "|", "jq", "-r", 
     "'if .Vpcs[0] == null then {} else .Vpcs[0] | with_entries(select(.key | in({\"VpcId\":1}))) end'"
   ])

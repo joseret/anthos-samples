@@ -50,7 +50,7 @@ data "aws_iam_policy_document" "api_assume_role_policy_document" {
   }
 }
 resource "aws_iam_role" "api_role" {
-  name = "${iam_anthos_prefix}-anthos-api-role"
+  name = "${local.iam_anthos_prefix}-anthos-api-role"
 
   description        = "IAM role for OnePlatform service backend"
   assume_role_policy = data.aws_iam_policy_document.api_assume_role_policy_document.json
@@ -142,7 +142,7 @@ data "aws_iam_policy_document" "api_policy_document" {
   }
 }
 resource "aws_iam_policy" "api_policy" {
-  name   = "${iam_anthos_prefix}-anthos-api-policy"
+  name   = "${local.iam_anthos_prefix}-anthos-api-policy"
   path   = "/"
   policy = data.aws_iam_policy_document.api_policy_document.json
 }
@@ -167,7 +167,7 @@ data "aws_iam_policy_document" "cp_assume_role_policy_document" {
   }
 }
 resource "aws_iam_role" "cp_role" {
-  name               = "${iam_anthos_prefix}-anthos-cp-role"
+  name               = "${local.iam_anthos_prefix}-anthos-cp-role"
   description        = "IAM role for the control plane"
   assume_role_policy = data.aws_iam_policy_document.cp_assume_role_policy_document.json
 
@@ -282,7 +282,7 @@ data "aws_iam_policy_document" "cp_policy_document" {
   }
 }
 resource "aws_iam_policy" "cp_policy" {
-  name   = "${iam_anthos_prefix}-anthos-cp-policy"
+  name   = "${local.iam_anthos_prefix}-anthos-cp-policy"
   path   = "/"
   policy = data.aws_iam_policy_document.cp_policy_document.json
 }
@@ -294,7 +294,7 @@ resource "aws_iam_role_policy_attachment" "cp_role_policy_attachment" {
 }
 # Step 4 & 5 in doc
 resource "aws_iam_instance_profile" "cp_instance_profile" {
-  name = "${iam_anthos_prefix}-anthos-cp-instance-profile"
+  name = "${local.iam_anthos_prefix}-anthos-cp-instance-profile"
   role = aws_iam_role.cp_role.id
 }
 
@@ -312,7 +312,7 @@ data "aws_iam_policy_document" "np_assume_role_policy_document" {
   }
 }
 resource "aws_iam_role" "np_role" {
-  name               = "${iam_anthos_prefix}-anthos-np-role"
+  name               = "${local.iam_anthos_prefix}-anthos-np-role"
   description        = "IAM role for the node pool"
   assume_role_policy = data.aws_iam_policy_document.np_assume_role_policy_document.json
 
@@ -328,7 +328,7 @@ data "aws_iam_policy_document" "np_policy_document" {
   }
 }
 resource "aws_iam_policy" "np_policy" {
-  name   = "${iam_anthos_prefix}-anthos-np-policy"
+  name   = "${local.iam_anthos_prefix}-anthos-np-policy"
   path   = "/"
   policy = data.aws_iam_policy_document.np_policy_document.json
 }
@@ -339,7 +339,7 @@ resource "aws_iam_role_policy_attachment" "np_role_policy_attachment" {
 }
 
 resource "aws_iam_instance_profile" "np_instance_profile" {
-  name = "${iam_anthos_prefix}-anthos-np-instance-profile"
+  name = "${local.iam_anthos_prefix}-anthos-np-instance-profile"
   role = aws_iam_role.np_role.id
 }
 

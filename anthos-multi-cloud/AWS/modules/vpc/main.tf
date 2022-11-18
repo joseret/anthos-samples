@@ -79,7 +79,7 @@ resource "aws_vpc" "this" {
 # Step 1
 resource "aws_subnet" "private_cp" {
   count             = local.az_count
-  vpc_id            = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
+  vpc_id            = try(aws_vpc.this[0].id, vpc_id)
   cidr_block        = var.cp_private_subnet_cidr_blocks[count.index]
   availability_zone = var.subnet_availability_zones[count.index]
   tags = {

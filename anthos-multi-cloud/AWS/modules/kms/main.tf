@@ -25,7 +25,7 @@ terraform {
 }
 
 locals {
-  key_anthos_prefix = "${local.key_anthos_prefix}-a"
+  key_anthos_prefix = "${var.key_anthos_prefix}-a"
 }
 
 data "aws_caller_identity" "current" {}

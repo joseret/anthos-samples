@@ -16,7 +16,7 @@
 
 output "aws_vpc_id" {
   description = "ARN of the actuated KMS key resource for cluster secret encryption"
-  value       = try(aws_vpc.this[0].id, vpc_id)
+  value       = try(aws_vpc.this[0].id, local.vpc_id)
 }
 
 # output "aws_cp_subnet_id_1" {

@@ -79,7 +79,7 @@ resource "aws_vpc" "this" {
 # Step 1
 resource "aws_subnet" "private_cp" {
   count             = local.az_count
-  vpc_id            = try(aws_vpc.this[0].id, vpc_id)
+  vpc_id            = try(aws_vpc.this[0].id, local.vpc_id)
   cidr_block        = var.cp_private_subnet_cidr_blocks[count.index]
   availability_zone = var.subnet_availability_zones[count.index]
   tags = {
@@ -97,7 +97,7 @@ resource "aws_subnet" "private_cp" {
 resource "aws_subnet" "public" {
 
   count                   = local.psubnet_count
-  vpc_id                  = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
+  vpc_id                  = try(aws_vpc.this[0].id, local.vpc_id)
   cidr_block              = var.public_subnet_cidr_block[count.index]
   availability_zone       = var.subnet_availability_zones[count.index]
   map_public_ip_on_launch = true
@@ -113,7 +113,7 @@ resource "aws_subnet" "public" {
 # Step 4
 # Create an internet gateway
 resource "aws_internet_gateway" "this" {
-  vpc_id = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
+  vpc_id = try(aws_vpc.this[0].id, local.vpc_id)
   tags = {
     Name = local.vpc_name
   }
@@ -129,7 +129,7 @@ resource "aws_internet_gateway" "this" {
 # Step 1
 resource "aws_route_table" "public" {
   count  = local.psubnet_count
-  vpc_id = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
+  vpc_id = try(aws_vpc.this[0].id, local.vpc_id)
 
   tags = {
     Name = "${local.vpc_name}-public-${count.index}"
@@ -197,7 +197,7 @@ resource "aws_nat_gateway" "this" {
 # Create a route table for each private subnet
 resource "aws_route_table" "private" {
   count  = local.az_count
-  vpc_id = try(aws_vpc.this[0].id, data.aws_vpc.selected.arn)
+  vpc_id = try(aws_vpc.this[0].id, local.vpc_id)
   tags = {
     Name = "${local.vpc_name}-private-${count.index}"
   }

@@ -69,86 +69,86 @@ resource "aws_kms_alias" "control_plane_root_volume_encryption_kms_key_alias" {
   name          = "alias/anthos-${local.key_anthos_prefix}-cp-root-volume-key"
 }
 
-# data "aws_iam_policy_document" "root_volume_encryption_policy_document" {
-#   // Allow access by AWSServiceRoleForAutoScaling.
-#   statement {
-#     effect = "Allow"
-#     actions = [
-#       "kms:CreateGrant",
-#     ]
-#     principals {
-#       type        = "AWS"
-#       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"]
-#     }
-#     resources = [
-#       "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/*",
-#     ]
-#     condition {
-#       test     = "StringEquals"
-#       variable = "kms:CallerAccount"
-#       values   = ["${data.aws_caller_identity.current.account_id}"]
-#     }
-#     condition {
-#       test     = "StringEquals"
-#       variable = "kms:ViaService"
-#       values   = ["ec2.${var.aws_region}.amazonaws.com"]
-#     }
-#     condition {
-#       test     = "Bool"
-#       variable = "kms:GrantIsForAWSResource"
-#       values   = [true]
-#     }
-#   }
-#   statement {
-#     effect = "Allow"
-#     actions = [
-#       "kms:GenerateDataKeyWithoutPlaintext",
-#     ]
-#     principals {
-#       type        = "AWS"
-#       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"]
-#     }
-#     resources = [
-#       "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/*",
-#     ]
-#     condition {
-#       test     = "StringEquals"
-#       variable = "kms:CallerAccount"
-#       values   = ["${data.aws_caller_identity.current.account_id}"]
-#     }
-#     condition {
-#       test     = "StringEquals"
-#       variable = "kms:ViaService"
-#       values   = ["ec2.${var.aws_region}.amazonaws.com"]
-#     }
-#   }
-#   // Allow access by root account.
-#   statement {
-#     effect  = "Allow"
-#     actions = ["kms:*"]
-#     principals {
-#       type        = "AWS"
-#       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
-#     }
-#     resources = ["*"]
-#   }
-# }
+data "aws_iam_policy_document" "root_volume_encryption_policy_document" {
+  // Allow access by AWSServiceRoleForAutoScaling.
+  statement {
+    effect = "Allow"
+    actions = [
+      "kms:CreateGrant",
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"]
+    }
+    resources = [
+      "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/*",
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:CallerAccount"
+      values   = ["${data.aws_caller_identity.current.account_id}"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["ec2.${var.aws_region}.amazonaws.com"]
+    }
+    condition {
+      test     = "Bool"
+      variable = "kms:GrantIsForAWSResource"
+      values   = [true]
+    }
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "kms:GenerateDataKeyWithoutPlaintext",
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"]
+    }
+    resources = [
+      "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/*",
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "kms:CallerAccount"
+      values   = ["${data.aws_caller_identity.current.account_id}"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["ec2.${var.aws_region}.amazonaws.com"]
+    }
+  }
+  // Allow access by root account.
+  statement {
+    effect  = "Allow"
+    actions = ["kms:*"]
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+    resources = ["*"]
+  }
+}
 
-# resource "aws_kms_key" "node_pool_config_encryption_kms_key" {
-#   description = "${local.key_anthos_prefix} AWS Node Pool Configuration Encryption KMS Key"
-# }
+resource "aws_kms_key" "node_pool_config_encryption_kms_key" {
+  description = "${local.key_anthos_prefix} AWS Node Pool Configuration Encryption KMS Key"
+}
 
-# resource "aws_kms_alias" "node_pool_config_encryption_kms_key_alias" {
-#   target_key_id = aws_kms_key.node_pool_config_encryption_kms_key.arn
-#   name          = "alias/anthos-${local.key_anthos_prefix}-np-config-key"
-# }
+resource "aws_kms_alias" "node_pool_config_encryption_kms_key_alias" {
+  target_key_id = aws_kms_key.node_pool_config_encryption_kms_key.arn
+  name          = "alias/anthos-${local.key_anthos_prefix}-np-config-key"
+}
 
-# resource "aws_kms_key" "node_pool_root_volume_encryption_kms_key" {
-#   description = "${local.key_anthos_prefix} AWS Node Pool Root Volume Encryption KMS Key"
-#   policy      = data.aws_iam_policy_document.root_volume_encryption_policy_document.json
-# }
+resource "aws_kms_key" "node_pool_root_volume_encryption_kms_key" {
+  description = "${local.key_anthos_prefix} AWS Node Pool Root Volume Encryption KMS Key"
+  policy      = data.aws_iam_policy_document.root_volume_encryption_policy_document.json
+}
 
-# resource "aws_kms_alias" "node_pool_root_volume_encryption_kms_key_alias" {
-#   target_key_id = aws_kms_key.node_pool_root_volume_encryption_kms_key.arn
-#   name          = "alias/anthos-${local.key_anthos_prefix}-np-root-volume-key"
-# }
+resource "aws_kms_alias" "node_pool_root_volume_encryption_kms_key_alias" {
+  target_key_id = aws_kms_key.node_pool_root_volume_encryption_kms_key.arn
+  name          = "alias/anthos-${local.key_anthos_prefix}-np-root-volume-key"
+}

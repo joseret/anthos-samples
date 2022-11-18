@@ -153,19 +153,19 @@ resource "aws_route_table_association" "public" {
 
 
 # # Create default routers to the internet gateway
-# resource "aws_route" "public_internet_gateway" {
-#   count                  = local.psubnet_count
-#   route_table_id         = aws_route_table.public[count.index].id
-#   gateway_id             = aws_internet_gateway.this.id
-#   destination_cidr_block = "0.0.0.0/0"
-#   timeouts {
-#     create = "5m"
-#   }
-#   depends_on = [
-#     aws_route_table.public, 
-#     aws_internet_gateway.this
-#   ]  
-# }
+resource "aws_route" "public_internet_gateway" {
+  count                  = local.psubnet_count
+  route_table_id         = aws_route_table.public[count.index].id
+  gateway_id             = aws_internet_gateway.this.id
+  destination_cidr_block = "0.0.0.0/0"
+  timeouts {
+    create = "5m"
+  }
+  depends_on = [
+    aws_route_table.public, 
+    aws_internet_gateway.this
+  ]  
+}
 
 
 # # Reservce an elastic IP address for the NAT gateway_id

@@ -112,15 +112,15 @@ resource "aws_subnet" "public" {
 
 # # Step 4
 # # Create an internet gateway
-# resource "aws_internet_gateway" "this" {
-#   vpc_id = try(aws_vpc.this[0].id, local.vpc_id)
-#   tags = {
-#     Name = local.vpc_name
-#   }
-#   depends_on = [
-#     aws_vpc.this
-#   ]
-# }
+resource "aws_internet_gateway" "this" {
+  vpc_id = try(aws_vpc.this[0].id, local.vpc_id)
+  tags = {
+    Name = local.vpc_name
+  }
+  depends_on = [
+    aws_vpc.this
+  ]
+}
 
 
 

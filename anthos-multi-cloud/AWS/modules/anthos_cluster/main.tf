@@ -79,14 +79,14 @@ resource "google_container_aws_cluster" "this" {
  
   }
 
-  # logging_config {
-  #   component_config {
-  #     enable_components = [
-  #       "SYSTEM",
-  #       "WORKLOAD",
-  #     ]
-  #   } 
-  # }   
+  logging_config {
+    component_config {
+      enable_components = [
+        "SYSTEM",
+        "WORKLOAD",
+      ]
+    } 
+  }   
 
   fleet {
     project = var.fleet_project

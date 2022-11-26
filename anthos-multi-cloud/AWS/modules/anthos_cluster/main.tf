@@ -79,6 +79,15 @@ resource "google_container_aws_cluster" "this" {
   fleet {
     project = var.fleet_project
   }
+  logging_config {
+    component_config {
+      enable_components = [
+        "SYSTEM",
+        "WORKLOAD",
+      ]
+    }
+
+  }
   timeouts {
     create = "45m"
     update = "45m"

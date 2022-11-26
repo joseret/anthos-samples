@@ -28,6 +28,7 @@ output "project_number" {
 }
 
 resource "google_container_aws_cluster" "this" {
+  provider = google-beta
   aws_region  = var.aws_region
   description = "Test AWS cluster created with Terraform"
   location    = var.location
@@ -75,16 +76,18 @@ resource "google_container_aws_cluster" "this" {
     pod_address_cidr_blocks     = var.pod_address_cidr_blocks
     service_address_cidr_blocks = var.service_address_cidr_blocks
     vpc_id                      = var.vpc_id
-    logging_config {
-      component_config {
-        enable_components = [
-          "SYSTEM",
-          "WORKLOAD",
-        ]
-      } 
-    }    
+ 
   }
-  
+
+  # logging_config {
+  #   component_config {
+  #     enable_components = [
+  #       "SYSTEM",
+  #       "WORKLOAD",
+  #     ]
+  #   } 
+  # }   
+
   fleet {
     project = var.fleet_project
   }

@@ -75,19 +75,20 @@ resource "google_container_aws_cluster" "this" {
     pod_address_cidr_blocks     = var.pod_address_cidr_blocks
     service_address_cidr_blocks = var.service_address_cidr_blocks
     vpc_id                      = var.vpc_id
+    logging_config {
+      component_config {
+        enable_components = [
+          "SYSTEM",
+          "WORKLOAD",
+        ]
+      } 
+    }    
   }
+  
   fleet {
     project = var.fleet_project
   }
-  logging_config {
-    component_config {
-      enable_components = [
-        "SYSTEM",
-        "WORKLOAD",
-      ]
-    }
 
-  }
   timeouts {
     create = "45m"
     update = "45m"

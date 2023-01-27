@@ -21,14 +21,14 @@ output "aws_vpc_id" {
 
 output "aws_cp_subnet_id_1" {
   description = "private subnet ID of control plane 1"
-  value       = aws_subnet.private_cp[0].id
+  value       =  try(aws_subnet.private_cp[0].id,null)
 }
 
 output "aws_cp_subnet_id_2" {
   description = "private subnet ID of control plane 2"
-  value       = aws_subnet.private_cp[1].id
+  value       = try(aws_subnet.private_cp[1].id, null)
 }
 output "aws_cp_subnet_id_3" {
   description = "private subnet ID of control plane 3"
-  value       = aws_subnet.private_cp[2].id
+  value       = try(aws_subnet.private_cp[2].id,  null)
 }

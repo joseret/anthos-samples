@@ -15,6 +15,7 @@
  */
 
 data "google_project" "project" {
+  project = var.gcp_project
 }
 
 output "project_number" {

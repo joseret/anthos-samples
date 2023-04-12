@@ -24,7 +24,7 @@ data "azurerm_resource_group" "vnet" {
 }
 
 locals {
-  data_azurerm_resource_group_vnet = data.azurerm_resource_group.vnet
+  data_azurerm_resource_group_vnet_id = data.azurerm_resource_group.vnet.id
 }
 
 resource "azurerm_resource_group" "vnet" {

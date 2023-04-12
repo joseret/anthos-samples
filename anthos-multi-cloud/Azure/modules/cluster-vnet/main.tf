@@ -35,9 +35,6 @@ resource "azurerm_resource_group" "vnet" {
   depends_on = [
     data.azurerm_resource_group.vnet
   ]
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 #Create VNet

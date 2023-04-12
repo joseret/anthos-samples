@@ -24,7 +24,8 @@ data "azurerm_resource_group" "vnet" {
 }
 
 locals {
-  data_azurerm_resource_group_vnet_id = data.azurerm_resource_group.vnet.id
+  data_azurerm_resource_group_vnet_id   = data.azurerm_resource_group.vnet.id
+  data_azurerm_resource_group_vnet_name = data.azurerm_resource_group.vnet.name
 }
 
 resource "azurerm_resource_group" "vnet" {
@@ -67,7 +68,7 @@ resource "azurerm_public_ip" "nat_gateway_pip" {
 resource "azurerm_nat_gateway" "nat_gateway" {
   name                    = "${var.name}-nat-gateway"
   location                = var.region
-  resource_group_name     = azurerm_resource_group.vnet.name
+  resource_group_name     = local.data_azurerm_resource_group_vnet_name
   sku_name                = "Standard"
   idle_timeout_in_minutes = 10
 }

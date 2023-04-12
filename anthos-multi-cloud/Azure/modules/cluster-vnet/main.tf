@@ -18,9 +18,15 @@
 data "azurerm_subscription" "current" {
 }
 
-resource "azurerm_resource_group" "vnet" {
+data "azurerm_resource_group" "vnet" {
   location = var.region
   name     = var.name
+}
+
+resource "azurerm_resource_group" "vnet" {
+  for_each = data.azurerm_resource_group.vnet.id == null ? [] : [var.name]
+  location = var.region
+  name     = each.key
 }
 
 #Create VNet

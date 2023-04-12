@@ -27,6 +27,9 @@ resource "azurerm_resource_group" "vnet" {
   for_each = data.azurerm_resource_group.vnet.id == null ? [] : [var.name]
   location = var.region
   name     = each.key
+  depends_on = [
+    data.azurerm_resource_group.vnet
+  ]
 }
 
 #Create VNet

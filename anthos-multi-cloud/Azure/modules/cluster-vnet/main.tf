@@ -42,14 +42,14 @@ resource "azurerm_resource_group" "vnet" {
 resource "azurerm_virtual_network" "vnet" {
   name                = var.name
   location            = var.region
-  resource_group_name = azurerm_resource_group.vnet.name
+  resource_group_name = local.data_azurerm_resource_group_vnet_name
   address_space       = ["10.0.0.0/16", "10.200.0.0/16"]
 }
 
 #Create subnet
 resource "azurerm_subnet" "default" {
   name                 = "default"
-  resource_group_name  = azurerm_resource_group.vnet.name
+  resource_group_name  = local.data_azurerm_resource_group_vnet_name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
 }
@@ -58,7 +58,7 @@ resource "azurerm_subnet" "default" {
 resource "azurerm_public_ip" "nat_gateway_pip" {
   name                = "${var.name}-nat-ip"
   location            = var.region
-  resource_group_name = azurerm_resource_group.vnet.name
+  resource_group_name = local.data_azurerm_resource_group_vnet_name
   allocation_method   = "Static"
   sku                 = "Standard"
 }

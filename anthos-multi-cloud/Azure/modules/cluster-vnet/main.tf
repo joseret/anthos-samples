@@ -105,7 +105,7 @@ resource "azurerm_role_definition" "this" {
 
 resource "azurerm_role_assignment" "this" {
   # scope = azurerm_resource_group.vnet.id
-  scope = data_azurerm_resource_group_vnet.id
+  scope = data_azurerm_resource_group_vnet_id
   # See bug https://github.com/hashicorp/terraform-provider-azurerm/issues/8426
   # role_definition_id = azurerm_role_definition.this.id does not work
   role_definition_id = trimsuffix(azurerm_role_definition.this.id, "|${azurerm_role_definition.this.scope}")

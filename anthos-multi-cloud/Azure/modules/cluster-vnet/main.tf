@@ -36,7 +36,7 @@ resource "azurerm_resource_group" "vnet" {
     data.azurerm_resource_group.vnet
   ]
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
 

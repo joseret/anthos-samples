@@ -29,7 +29,7 @@ locals {
 }
 
 resource "azurerm_resource_group" "vnet" {
-  for_each = data.azurerm_resource_group.vnet.id != null ? [] : [var.name]
+  for_each = (data.azurerm_resource_group.vnet.id != null) ? toset([]) : toset([var.name])
   location = var.region
   name     = each.key
   depends_on = [

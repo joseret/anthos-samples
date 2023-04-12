@@ -19,8 +19,8 @@ data "azurerm_subscription" "current" {
 }
 
 data "azurerm_resource_group" "vnet" {
-  location = var.region
-  name     = var.name
+  # location = var.region
+  name = var.name
 }
 
 resource "azurerm_resource_group" "vnet" {

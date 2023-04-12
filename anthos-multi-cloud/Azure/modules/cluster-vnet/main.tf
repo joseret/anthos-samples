@@ -23,6 +23,10 @@ data "azurerm_resource_group" "vnet" {
   name = var.name
 }
 
+locals {
+  data_azurerm_resource_group_vnet = data.azurerm_resource_group.vnet
+}
+
 resource "azurerm_resource_group" "vnet" {
   for_each = data.azurerm_resource_group.vnet.id != null ? [] : [var.name]
   location = var.region
@@ -100,7 +104,8 @@ resource "azurerm_role_definition" "this" {
 }
 
 resource "azurerm_role_assignment" "this" {
-  scope = azurerm_resource_group.vnet.id
+  # scope = azurerm_resource_group.vnet.id
+  scope = data_azurerm_resource_group_vnet.id
   # See bug https://github.com/hashicorp/terraform-provider-azurerm/issues/8426
   # role_definition_id = azurerm_role_definition.this.id does not work
   role_definition_id = trimsuffix(azurerm_role_definition.this.id, "|${azurerm_role_definition.this.scope}")
